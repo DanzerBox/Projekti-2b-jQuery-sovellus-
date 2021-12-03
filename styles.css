@@ -1,0 +1,17 @@
+#movies img, #movie img {
+  width: 100%;
+}
+
+@media(min-width:960px) {
+#movies .col-md-3 .well {
+  height: 630px;
+  animation: alternate;
+  
+  
+}
+#movies .col-md-3 img {
+   height: 420px;
+   width: 297px;
+   
+}
+}
