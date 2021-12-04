@@ -3,7 +3,8 @@
 Tämä on vain esimerkki jQuery-sovelluksesta käyttäen Elokuva OMDB API kirjastoa.
 Etsi Haluamasi Elokuva - sovellus on itsenäisesti tehty projekti käyttäen esimerkkejä ja opetusmateriaaleja. 
 
-![esimerkki](pääsivu.png)(infosivu.png)
+![esimerkki](pääsivu.png)
+![esimerkki](infosivu.png)
 
 ## Linkki sovellukseen
 

@@ -17,8 +17,8 @@ $(document).ready(() => {
 //Sisältää myös mahdollisuuden avata elokuvan tiedot esiin klikattua kuvaa.
 function getMovies(searchText){
     let apiKey = 'thewdb';
-    let x = `http://www.omdbapi.com?s=${searchText}&apikey=${apiKey}`;
-    axios.get(`http://www.omdbapi.com?s=${searchText}&apikey=${apiKey}`)
+    let x = `https://www.omdbapi.com?s=${searchText}&apikey=${apiKey}`;
+    axios.get(`https://www.omdbapi.com?s=${searchText}&apikey=${apiKey}`)
         .then((response) => {
             if (response.data.Response == "False"){
                 $('#headerDisplay').hide();
@@ -71,7 +71,7 @@ function movieSelected(id){
 function getMovie(){    
     let movieId = sessionStorage.getItem('movieId');
     let apiKey = 'thewdb';
-    axios.get(`http://www.omdbapi.com?i=${movieId}&apikey=${apiKey}`)
+    axios.get(`https://www.omdbapi.com?i=${movieId}&apikey=${apiKey}`)
     .then((response) => {
         let movie = response.data;
         let output = `
