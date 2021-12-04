@@ -1,6 +1,6 @@
 
-
-//tässä tekstikentän avulla haetaa elokuvan nimen perusteella, itse elokuva.
+//kokonaisuus on kootu api kirjaston ympärille.
+//tässä tekstikentän avulla haetaa elokuvan nimen perusteella se itse elokuva.
 $(document).ready(() => {
     $('#headerDisplay').hide();
     $('#searchForm').on('submit', (e) => {
@@ -66,8 +66,9 @@ function movieSelected(id){
     return false;
 }
 
-//Tässä haetaan suoraan omdb sivulta api kirjasto, johon on listattu elokuvan tiedot
-//Bootstrapilla on rakennettu se miten elokuvan tiedot tulee esille.
+//Tässä haetaan suoraan omdb api kirjasto, johon on listattu elokuvan tiedot, sitä varten on tehty erikseen toinen html sivu.
+//Bootstrapilla on rakennettu se miten elokuvan tiedot tulee esiin. 
+//Voit sivustolta tarkastaa elokuvan kaikki tiedot ja myös löytyy synopsis, sekä linkki suoraan imdb sivustolle.
 function getMovie(){    
     let movieId = sessionStorage.getItem('movieId');
     let apiKey = 'thewdb';
@@ -108,7 +109,5 @@ function getMovie(){
     .catch((err) => {
         console.log(err);
     });
-
-
 
 }
