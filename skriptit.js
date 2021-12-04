@@ -1,81 +1,114 @@
+
+
 //tässä tekstikentän avulla haetaa elokuvan nimen perusteella, itse elokuva.
 $(document).ready(() => {
-  $('#searchForm').on('submit', (e) => {
-      let searchText = $('#searchText').val();
-      getMovies(searchText);
-      e.preventDefault();
-  });
-});
-//Tähän on rakennettu funktio
-function getMovies(searchText) {
-  axios.get('http://www.omdbapi.com/?apikey=2ce3a67e&s=' + searchText)
-  .then((response) => {
-      console.log(response);
-      let movies = response.data.Search;
-      let output = '';
-      $.each(movies, (index, movie) => {
-          output+= `
-          <div class="col-md-3">
-              <div class = "well text-center">
-                  <img src = "${movie.Poster}">
-                  <h5>${movie.Title}</h5>
-                  <a onclick="movieSelected('${movie.imdbID}')" class = "btn btn-primary" href = "#">Movie Details</a>
-              </div>
-          </div>
-          `;
-      });
-      $('#movies').html(output);
-  })
-  .catch((err) => {
-      console.log(err);
-  });
-}
-//valitaan elokuva id mukaan
-function movieSelected(id){
-  sessionStorage.setItem('movieId', id);
-  window.location = 'movie.html';
-  return false;
-}
-//Tässä haetaan suoraan omdb sivulta api kirjasto, johon on listattu elokuva
-//Bootstrapilla on rakennettu se miten elokuva tulee esille.
-function getMovie() {
-  let movieId = sessionStorage.getItem('movieId');
-  axios.get('http://www.omdbapi.com/?apikey=2ce3a67e&i=' + movieId)
-  .then((response) => {
-      console.log(response);
-      let movie = response.data;
+    $('#headerDisplay').hide();
+    $('#searchForm').on('submit', (e) => {
+        let searchText = $('#searchText').val();
+        getMovies(searchText);
+        e.preventDefault();
 
-      let output = `
-      <div class="row">
-          <div class="col-md-4">
-              <img src = "${movie.Poster}" class = "thumbnail">
-          </div>
-          <div class = "col-md-6">
-              <h2>${movie.Title}</h2>
-              <ul class = "list-group">
-                  <li class = "list-group-item"><strong>Genre:</strong> ${movie.Genre}</li>
-                  <li class = "list-group-item"><strong>Released:</strong> ${movie.Released}</li>
-                   <li class = "list-group-item"><strong>Rated:</strong> ${movie.Rated}</li>
-                  <li class = "list-group-item"><strong>IMDB Rating:</strong> ${movie.imdbRating}</li>
-                  <li class = "list-group-item"><strong>Director:</strong> ${movie.Director}</li>
-                  <li class = "list-group-item"><strong>Writer:</strong> ${movie.Writer}</li>
-                  <li class = "list-group-item"><strong>Actors:</strong> ${movie.Actors}</li>
-              </ul>
-          </div>
-      </div>
-      <div class = "row">
-          <div class = "well">
-              <h3>Plot</h3>
-              ${movie.Plot}
-              <hr>
-              <a href = "http://imdb.com/title/${movie.imdbID}" target = "_blank" class = "btn btn-primary">View IMBD</a>
-              <a href = "index.html" class = btn btn-default">Go back to search</a>
-          </div>
-      </div>
-      `;
-      $('#movie').html(output);
-  })
-  .catch((err) => {
-      console.log(err);
-  });
+    });
+});
+
+//Tähän on rakennettu funktio, joka hakee ja näyttä tiedot kaikista elokuvista käyttämällä omdbapia.
+//Jos jokin elokuvan nimi on kirjoitettu väärin niin se antaa virheen.
+//Tämä on tehty mahdollisimman responsiiviseksi ja lisätty pieni hover animaatio.
+//Sisältää myös mahdollisuuden avata elokuvan tiedot esiin klikattua kuvaa.
+function getMovies(searchText){
+    let apiKey = 'thewdb';
+    let x = `http://www.omdbapi.com?s=${searchText}&apikey=${apiKey}`;
+    axios.get(`http://www.omdbapi.com?s=${searchText}&apikey=${apiKey}`)
+        .then((response) => {
+            if (response.data.Response == "False"){
+                $('#headerDisplay').hide();
+                let output = `<h3>Elokuvasi Ei löytynyt!</h3>`
+                $('#movies').html(output);
+            } else {
+            $('#headerDisplay').show();
+            let movies = response.data.Search;
+            let output=``;
+            $.each(movies, (index, movie) => {
+                let image;
+                if (movie.Poster !== "N/A") 
+                    image = movie.Poster;
+                else 
+                    image = "https://cdn-icons.flaticon.com/png/512/666/premium/666201.png?token=exp=1638637941~hmac=389a944d45df025473accc33164e0189";
+                output += `
+                <style>
+                #zoom:hover {
+                    transform: scale(1.05); 
+                  }
+                </style>
+
+                    <div class="col-md-3">
+                        <div class="movieBox text-center" id="zoom">                            
+                            <a onclick="movieSelected('${movie.imdbID}')" href="#"><img src="${image}"> </a>
+                            <h5 class="movieTitle">${movie.Title}</h5>
+                        </div>
+                    </div>
+                `;
+            });
+        
+            //Tämähän muuttaa näkymän html:n näköiseksi.
+            $('#movies').html(output);
+        }
+
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
+//valitaan elokuva id sijainnin mukaan ja mahdollisesti tallentaa istunnon.
+function movieSelected(id){
+    sessionStorage.setItem('movieId', id);
+    window.location = 'info.html';
+    return false;
+}
+
+//Tässä haetaan suoraan omdb sivulta api kirjasto, johon on listattu elokuvan tiedot
+//Bootstrapilla on rakennettu se miten elokuvan tiedot tulee esille.
+function getMovie(){    
+    let movieId = sessionStorage.getItem('movieId');
+    let apiKey = 'thewdb';
+    axios.get(`http://www.omdbapi.com?i=${movieId}&apikey=${apiKey}`)
+    .then((response) => {
+        let movie = response.data;
+        let output = `
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="${movie.Poster}" class="thumbnail">
+                </div>
+                <div class="col-md-8">
+                    <h2>${movie.Title}</h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Genre: ${movie.Genre} </li>
+                        <li class="list-group-item"> Julkaistu: ${movie.Released} </li>
+                        <li class="list-group-item"> Ikäraja: ${movie.Rated} </li>
+                        <li class="list-group-item"> IMBD Arvio: ${movie.imdbRating} </li>
+                        <li class="list-group-item"> Ohjaaja: ${movie.Director} </li>
+                        <li class="list-group-item"> Käsikirjoittajat: ${movie.Writer} </li>
+                        <li class="list-group-item"> Pääosissa: ${movie.Actors} </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="jumbotron">
+                <div class="movieDiv">
+                    <h3> Elokuvan Synopsis </h3>
+                    ${movie.Plot}
+                    <hr>
+                    <a href="http://imdb.com/title/${movie.imdbID}" target="_blank" class="btn btn-primary">Katso IMDB:stä</a>
+                </div>
+            </div>
+        `;
+
+        $('#movie').html(output);
+
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+
+
 }
